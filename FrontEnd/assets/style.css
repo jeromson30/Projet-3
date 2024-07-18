@@ -193,14 +193,12 @@ footer nav ul {
 
 .filters {
 	width: 100%;
-	margin-left: auto;
-	margin-right: auto;
 	display: flex;
-	justify-content: space-around;
+	justify-content: center;
 	margin-bottom: 20px;
 }
 
-.filters button{
+.button_filters{
 	width: initial;
 	min-width: 100px;
 	font-family: 'Syne';
@@ -213,9 +211,18 @@ footer nav ul {
 	border-color: #1D6154;
 	border-radius: 20px;
 	padding: 6px 10px 6px 10px;
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
 .filters button:hover{
+	background-color: #1D6154;
+	cursor: pointer;
+	color: white;
+
+}
+
+.selected {
 	background-color: #1D6154;
 	color: white;
 

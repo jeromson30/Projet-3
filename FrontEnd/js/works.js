@@ -10,7 +10,7 @@ async function RecupInfoAPI() {
         Filters();
         LoadingProjects(0);
     } catch(error) {
-        console.error("Oups, il y a une erreur : " + error);
+        console.error("Oups, il y a une erreur : " + error.message);
     };
 };
 
@@ -63,10 +63,11 @@ function Filters() {
 
     for (let i = 0; i < LabelCategorie.length; i++) {
         boutonFilter = document.createElement("button");
-        contentBouton.appendChild(boutonFilter);
+        boutonFilter.classList.add('button_filters');
         boutonFilter.setAttribute("id", "FiltreCat");
         boutonFilter.setAttribute("data-id", LabelCategorie[i].id);
         boutonFilter.innerText = LabelCategorie[i].name;
+        contentBouton.appendChild(boutonFilter);
     };
 
 
@@ -75,6 +76,8 @@ function Filters() {
     for (let i = 0; i < bouton.length; i++) {
         bouton[i].addEventListener("click", function() {
             LoadingProjects(bouton[i].dataset.id);
+            document.querySelectorAll('.selected').forEach((el => el.classList.remove('selected')));
+            bouton[i].classList.add('selected');
             //console.log("click sur : " + bouton[i].dataset.id);
         });
     }
