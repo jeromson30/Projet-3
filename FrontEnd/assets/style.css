@@ -229,6 +229,7 @@ footer nav ul {
 }
 
 main{
+	text-align: center;
 	min-height: 500px;
 }
 
@@ -266,6 +267,11 @@ main{
 .login a{
 	font-weight: bold;
 	color: #3D3D3D;
+}
+
+.loginInfo {
+	color: red;
+	text-align: center;
 }
 
 input[type="submit"]{
