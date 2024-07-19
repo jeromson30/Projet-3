@@ -15,7 +15,8 @@ async function RecupInfoAPI() {
 };
 
 
-
+// Fonction qui a pour but de charger tous les projets trouvé dans l'API : http://localhost:5678/api/works
+// @params Projects = l'ID des catégories à afficher, ID: 0 affiche tous les projets.
 function LoadingProjects(Projects){
     //console.log(works);
 
@@ -48,6 +49,8 @@ function LoadingProjects(Projects){
     };
 };
 
+
+// Fonction qui a pour but récuperer toutes les catégories existantes dans les projets, puis de generer les boutons et leurs événements click.
 function Filters() {
     const contentBouton = document.getElementById("filters");
     const FiltersLabels = works;
