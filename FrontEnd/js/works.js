@@ -4,7 +4,6 @@ let works = {};
 async function RecupInfoAPI() {
     try {
         const result = await fetch(`http://localhost:5678/api/works`);
-
         works = await result.json();
         Filters();
         LoadingProjects(0);
@@ -16,6 +15,7 @@ async function RecupInfoAPI() {
 
 // Fonction qui a pour but de charger tous les projets trouvé dans l'API : http://localhost:5678/api/works
 // @params Projects = l'ID des catégories à afficher, ID: 0 affiche tous les projets.
+
 function LoadingProjects(Projects){
     //console.log(works);
 
@@ -50,19 +50,27 @@ function LoadingProjects(Projects){
 
 // A partir de l'objet works contenant tous les projets et leurs catégories, récuperé grace à la fonction fetch au chargement de la page.
 // La fonction Filter vient isoler dans un Array chaque catégorie pour ensuite générer les boutons avec leurs eventlisteners respectifs.
-// Je ne fais appel à la fonction fetch qu'une seule fois au chargement de la page mais j'aurai très bien pu une nouvelle fois utilisé fetch sur l'url : http://localhost:5678/api/categories
-function Filters() {
+// Je ne fais appel à la fonction fetch qu'une seule fois au chargement de la page mais j'aurai très bien pu utilisé une nouvelle fois fetch sur l'url : http://localhost:5678/api/categories
+
+async function Filters() {
     const contentBouton = document.getElementById("filters");
-    const FiltersLabels = works;
+    //const FiltersLabels = works;
     const LabelCategorie = [];
     //LabelCategorie.add(0);
     LabelCategorie.push({id: 0, name: 'Tous'});
 
-    for (let i = 0; i < FiltersLabels.length; i++) {
-        if (!(FiltersLabels[i]['category']['id'] in LabelCategorie)) {
-            LabelCategorie.push({id: FiltersLabels[i]['category']['id'], name: FiltersLabels[i]['category']['name']});
+    try {
+        const result = await fetch(`http://localhost:5678/api/categories`);
+        workscat = await result.json();
+        for (let i = 0; i < workscat.length; i++) {
+            if (!(workscat[i]['id'] in LabelCategorie)) {
+                LabelCategorie.push({id: workscat[i]['id'], name: workscat[i]['name']});
+            };
         };
+    } catch(error) {
+        console.error("Oups, il y a une erreur : " + error.message);
     };
+
 
     for (let i = 0; i < LabelCategorie.length; i++) {
         boutonFilter = document.createElement("button");

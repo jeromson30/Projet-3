@@ -9,7 +9,8 @@ loginform.addEventListener("submit", function(event){
     console.log(InputEmail);
     console.log(InputPasssword);
 
-    verifyUser(InputEmail.value, InputPasssword.value).then((result) => {
+    verifyUser(InputEmail.value, InputPasssword.value)
+    .then((result) => {
         if(result === true){
             console.log("Authentification réussie !");
             window.location = "./index.html";
@@ -52,7 +53,7 @@ function authOK(){
     } else {
         console.log("Pas connecté");
     }
-}
+};
 
 function verifySession(){
     validation = false
