@@ -6,7 +6,6 @@ async function RecupInfoAPI() {
         const result = await fetch(`http://localhost:5678/api/works`);
 
         works = await result.json();
-        console.log("Données reçu de l\'API");	
         Filters();
         LoadingProjects(0);
     } catch(error) {
@@ -49,8 +48,9 @@ function LoadingProjects(Projects){
     };
 };
 
-
-// Fonction qui a pour but récuperer toutes les catégories existantes dans les projets, puis de generer les boutons et leurs événements click.
+// A partir de l'objet works contenant tous les projets et leurs catégories, récuperé grace à la fonction fetch au chargement de la page.
+// La fonction Filter vient isoler dans un Array chaque catégorie pour ensuite générer les boutons avec leurs eventlisteners respectifs.
+// Je ne fais appel à la fonction fetch qu'une seule fois au chargement de la page mais j'aurai très bien pu une nouvelle fois utilisé fetch sur l'url : http://localhost:5678/api/categories
 function Filters() {
     const contentBouton = document.getElementById("filters");
     const FiltersLabels = works;
@@ -87,6 +87,5 @@ function Filters() {
     
 
 };
-
 
 RecupInfoAPI();
