@@ -1,12 +1,19 @@
+import { verifySession } from './session.js';
+
 let works = {};
 
 
-async function RecupInfoAPI() {
+async function initialisation() {
     try {
         const result = await fetch(`http://localhost:5678/api/works`);
         works = await result.json();
-        Filters();
+        await Filters();
         LoadingProjects(0);
+        if(verifySession() === true){
+            const el = document.getElementById('filters');
+            el.style.visibility = 'hidden';
+            createModal()
+        }
     } catch(error) {
         console.error("Oups, il y a une erreur : " + error.message);
     };
@@ -59,41 +66,53 @@ async function Filters() {
     //LabelCategorie.add(0);
     LabelCategorie.push({id: 0, name: 'Tous'});
 
-    try {
-        const result = await fetch(`http://localhost:5678/api/categories`);
-        workscat = await result.json();
-        for (let i = 0; i < workscat.length; i++) {
-            if (!(workscat[i]['id'] in LabelCategorie)) {
-                LabelCategorie.push({id: workscat[i]['id'], name: workscat[i]['name']});
+        try {
+            const result = await fetch(`http://localhost:5678/api/categories`);
+            let workscat = await result.json();
+            for (let i = 0; i < workscat.length; i++) {
+                if (!(workscat[i]['id'] in LabelCategorie)) {
+                    LabelCategorie.push({id: workscat[i]['id'], name: workscat[i]['name']});
+                };
             };
+        } catch(error) {
+            console.error("Oups, il y a une erreur : " + error.message);
         };
-    } catch(error) {
-        console.error("Oups, il y a une erreur : " + error.message);
-    };
 
 
-    for (let i = 0; i < LabelCategorie.length; i++) {
-        boutonFilter = document.createElement("button");
-        boutonFilter.classList.add('button_filters');
-        boutonFilter.setAttribute("id", "FiltreCat");
-        boutonFilter.setAttribute("data-id", LabelCategorie[i].id);
-        boutonFilter.innerText = LabelCategorie[i].name;
-        contentBouton.appendChild(boutonFilter);
-    };
+
+        for (let i = 0; i < LabelCategorie.length; i++) {
+            const boutonFilter = document.createElement("button");
+            boutonFilter.classList.add('button_filters');
+            boutonFilter.setAttribute("id", "FiltreCat");
+            boutonFilter.setAttribute("data-id", LabelCategorie[i].id);
+            boutonFilter.innerText = LabelCategorie[i].name;
+            contentBouton.appendChild(boutonFilter);
+        };
 
 
-    const bouton = document.querySelectorAll("#FiltreCat");
+        const bouton = document.querySelectorAll("#FiltreCat");
 
-    for (let i = 0; i < bouton.length; i++) {
-        bouton[i].addEventListener("click", function() {
+        for (let i = 0; i < bouton.length; i++) {
+            bouton[i].addEventListener("click", function() {
             LoadingProjects(bouton[i].dataset.id);
             document.querySelectorAll('.selected').forEach((el => el.classList.remove('selected')));
             bouton[i].classList.add('selected');
-            //console.log("click sur : " + bouton[i].dataset.id);
-        });
-    }
-    
-
+                    //console.log("click sur : " + bouton[i].dataset.id);
+            });
+        }
 };
 
-RecupInfoAPI();
+
+function createModal() {
+    const elBody = document.querySelector('body');
+    const elHeaderMod = document.createElement('div');
+    elHeaderMod.classList.add('headermodale');
+    elHeaderMod.innerHTML = '<a href="#"><i class="fa-solid fa-pen-to-square"></i> mode édition</a>';
+    elBody.prepend(elHeaderMod);
+    //<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>
+    const TitreProjets = document.querySelector('#TitreProjets');
+    TitreProjets.innerHTML += '<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>';
+
+}
+
+initialisation();

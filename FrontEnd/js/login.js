@@ -1,3 +1,4 @@
+import { verifySession } from './session.js';
 const loginform = document.getElementById("login");
 
 loginform.addEventListener("submit", function(event){
@@ -9,7 +10,7 @@ loginform.addEventListener("submit", function(event){
     console.log(InputEmail);
     console.log(InputPasssword);
 
-    verifyUser(InputEmail.value, InputPasssword.value)
+    login(InputEmail.value, InputPasssword.value)
     .then((result) => {
         if(result === true){
             console.log("Authentification réussie !");
@@ -19,14 +20,14 @@ loginform.addEventListener("submit", function(event){
 
 });
 
-async function verifyUser(loginemail, loginpassword){
+async function login(loginemail, loginpassword){
     
     let UserLogin = {};
     UserLogin.email = loginemail;
     UserLogin.password = loginpassword;
     UserLogin = JSON.stringify(UserLogin);
 
-    results = await fetch("http://localhost:5678/api/users/login", {
+    let results = await fetch("http://localhost:5678/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: UserLogin
@@ -42,9 +43,9 @@ async function verifyUser(loginemail, loginpassword){
     }
 };
 
-function authOK(){
+function alreadyLogged(){
     if(verifySession()){
-        loginform.remove()
+        loginform.remove();
         const TextInfo = document.createElement("span");
         const mainContent = document.querySelector("main");
         TextInfo.classList.add("loginInfo");
@@ -55,13 +56,4 @@ function authOK(){
     }
 };
 
-function verifySession(){
-    validation = false
-    if(window.sessionStorage.getItem("userId") !== null & window.sessionStorage.getItem("token") !== null){
-        validation = true;
-        console.log("Token détecté");
-    }
-    return validation;
-};
-
-authOK();
+alreadyLogged();
