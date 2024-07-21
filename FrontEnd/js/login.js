@@ -20,6 +20,8 @@ loginform.addEventListener("submit", function(event){
 
 });
 
+
+
 async function login(loginemail, loginpassword){
     
     let UserLogin = {};
@@ -44,7 +46,7 @@ async function login(loginemail, loginpassword){
 };
 
 function alreadyLogged(){
-    if(verifySession()){
+    if(verifySession() == true){
         loginform.remove();
         const TextInfo = document.createElement("span");
         const mainContent = document.querySelector("main");

@@ -9,10 +9,10 @@ async function initialisation() {
         works = await result.json();
         await Filters();
         LoadingProjects(0);
-        if(verifySession() === true){
+        if(await verifySession() == true){
             const el = document.getElementById('filters');
             el.style.visibility = 'hidden';
-            createModal()
+            createModalButtons();
         }
     } catch(error) {
         console.error("Oups, il y a une erreur : " + error.message);
@@ -103,7 +103,7 @@ async function Filters() {
 };
 
 
-function createModal() {
+function createModalButtons() {
     const elBody = document.querySelector('body');
     const elHeaderMod = document.createElement('div');
     elHeaderMod.classList.add('headermodale');
@@ -112,7 +112,45 @@ function createModal() {
     //<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>
     const TitreProjets = document.querySelector('#TitreProjets');
     TitreProjets.innerHTML += '<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>';
+};
 
-}
+function showModal(show) {
+    const checkModalButton = document.querySelector(".headermodale");
+    const elShowModal = document.querySelector(".modale_container");
 
-initialisation();
+    if(checkModalButton !== null & show == true){
+        elShowModal.style.visibility = "visible";
+
+        for (let i = 0; i < works.length; i++) {            
+            const workf = document.createElement("figure");
+            const workimg = document.createElement("img");
+            workf.appendChild(workimg);
+    
+            workimg.setAttribute("src", works[i].imageUrl);
+            workimg.setAttribute("alt", works[i].title);
+    
+            const content = document.getElementById("modaleProjets");
+            content.appendChild(workf);
+        };
+
+    } else {
+        elShowModal.style.visibility = "hidden";
+    }
+};
+
+await initialisation();
+
+const checkModalButton = document.querySelector(".headermodale");
+if(checkModalButton != null){
+    checkModalButton.addEventListener("click", function(){
+        showModal(true);
+    });
+};
+
+const hidemodale = document.querySelector("#hideModale");
+if(hidemodale != null){
+    hidemodale.addEventListener("click", function(){
+        console.log('click');
+        showModal();
+    });
+};
