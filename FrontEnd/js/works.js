@@ -121,15 +121,22 @@ function showModal(show) {
     if(checkModalButton !== null & show == true){
         elShowModal.style.visibility = "visible";
 
+        const content = document.getElementById("modaleProjets");
+        while (content.firstChild) {
+                content.firstChild.remove()
+        };
+
         for (let i = 0; i < works.length; i++) {            
             const workf = document.createElement("figure");
+            const workicon = document.createElement("i");
+            workicon.classList.add("fa-solid", "fa-trash-can", "modaleProjetsIcons");
+            workf.appendChild(workicon);
             const workimg = document.createElement("img");
             workf.appendChild(workimg);
     
             workimg.setAttribute("src", works[i].imageUrl);
             workimg.setAttribute("alt", works[i].title);
-    
-            const content = document.getElementById("modaleProjets");
+
             content.appendChild(workf);
         };
 
