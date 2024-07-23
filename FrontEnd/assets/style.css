@@ -22,6 +22,7 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+	text-align: left;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
@@ -36,6 +37,7 @@ body {
 	max-width: 1140px;
 	margin:auto;
 	font-family: 'Work Sans' ;
+	font-weight: 400;
 	font-size: 14px;
 }
 ol, ul {
@@ -58,10 +60,16 @@ table {
 header {
 	display: flex;
 	justify-content: space-between;
-	margin: 50px 0
+	margin: 50px 0;
+}
+.subtitle {
+	font-family: 'Work Sans' ;
+	font-weight: 500;
+	text-transform: uppercase;
+	margin-top: 10px;
 }
 section {
-	margin: 50px 0
+	margin: 100px 0;
 }
 
 h1{
@@ -90,11 +98,16 @@ nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
+	justify-content: space-around;
 
 }
 nav li {
 	padding: 0 10px;
 	font-size: 1.2em;
+	font-family: "Work Sans", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 600;
+	font-style: normal;
 }
 
 a {
@@ -117,6 +130,7 @@ a:current {
 #introduction {
 	display: flex;
 	align-items: center;
+	width: 85%;
 }
 #introduction figure {
 	flex: 1
@@ -125,17 +139,20 @@ a:current {
 	display: block;
 	margin: auto;
 	width: 80%;
+	object-fit: contain;
 }
 
 #introduction article {
-	flex: 1
+	flex: 1;
+	font-weight: 500;
+	max-width: 400px;
 }
 #introduction h2 {
 	margin-bottom: 1em;
 }
 
 #introduction p {
-	margin-bottom: 0.5em;
+	margin-bottom: 1em;
 }
 #portfolio h2 {
 	text-align: center;
@@ -195,7 +212,7 @@ footer nav ul {
 	width: 100%;
 	display: flex;
 	justify-content: center;
-	margin-bottom: 20px;
+	margin-bottom: 100px;
 }
 
 .button_filters{
