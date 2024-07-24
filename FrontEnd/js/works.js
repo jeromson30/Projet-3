@@ -10,9 +10,16 @@ async function initialisation() {
         await Filters();
         LoadingProjects(0);
         if(await verifySession() == true){
-            const el = document.getElementById('filters');
-            el.style.visibility = 'hidden';
+            const elFilters = document.getElementById('filters');
+            const elLogin = document.getElementById('login');
+
+            elFilters.style.visibility = 'hidden';
             createModalButtons();
+            elLogin.innerText = "logout";
+            elLogin.addEventListener("click", function(event){
+                window.sessionStorage.removeItem("userId");
+                window.sessionStorage.removeItem("token");
+            });
         }
     } catch(error) {
         console.error("Oups, il y a une erreur : " + error.message);

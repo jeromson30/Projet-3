@@ -1,27 +1,6 @@
 import { verifySession } from './session.js';
 const loginform = document.getElementById("login");
 
-loginform.addEventListener("submit", function(event){
-    event.preventDefault();
-
-    console.log("Click sur le bouton connexion!");
-    const InputEmail = loginform.querySelector(".loginEmail");
-    const InputPasssword = loginform.querySelector(".loginPassword");
-    console.log(InputEmail);
-    console.log(InputPasssword);
-
-    login(InputEmail.value, InputPasssword.value)
-    .then((result) => {
-        if(result === true){
-            console.log("Authentification réussie !");
-            window.location = "./index.html";
-        }
-    });
-
-});
-
-
-
 async function login(loginemail, loginpassword){
     
     let UserLogin = {};
@@ -50,12 +29,34 @@ function alreadyLogged(){
         loginform.remove();
         const TextInfo = document.createElement("span");
         const mainContent = document.querySelector("main");
+        
         TextInfo.classList.add("loginInfo");
         TextInfo.innerHTML = "Vous êtes déja connecté !";
+
         mainContent.appendChild(TextInfo);
     } else {
         console.log("Pas connecté");
     }
 };
+
+loginform.addEventListener("submit", function(event){
+    event.preventDefault();
+
+    console.log("Click sur le bouton connexion!");
+    const InputEmail = loginform.querySelector(".loginEmail");
+    const InputPasssword = loginform.querySelector(".loginPassword");
+    console.log(InputEmail);
+    console.log(InputPasssword);
+
+    login(InputEmail.value, InputPasssword.value)
+    .then((result) => {
+        if(result === true){
+            console.log("Authentification réussie !");
+            window.location = "./index.html";
+        }
+    });
+
+});
+
 
 alreadyLogged();

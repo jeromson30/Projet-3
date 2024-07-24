@@ -212,7 +212,8 @@ footer nav ul {
 	width: 100%;
 	display: flex;
 	justify-content: center;
-	margin-bottom: 100px;
+	margin-top: 50px;
+	margin-bottom: 50px;
 }
 
 .button_filters{
