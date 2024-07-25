@@ -16,10 +16,7 @@ async function initialisation() {
             elFilters.style.visibility = 'hidden';
             createModalButtons();
             elLogin.innerText = "logout";
-            elLogin.addEventListener("click", function(event){
-                window.sessionStorage.removeItem("userId");
-                window.sessionStorage.removeItem("token");
-            });
+            
         }
     } catch(error) {
         console.error("Oups, il y a une erreur : " + error.message);
@@ -168,3 +165,14 @@ if(hidemodale != null){
         showModal();
     });
 };
+
+const elLogin = document.getElementById('login');
+elLogin.addEventListener("click", async function(event){
+    if(await verifySession() == true){
+        window.sessionStorage.removeItem("userId");
+        window.sessionStorage.removeItem("token");
+        window.location = "./index.html";
+    } else {
+        window.location = "./login.html";
+    }
+});
