@@ -1,178 +1,236 @@
-import { verifySession } from './session.js';
+import { verifySession } from './session.js'
 
-let works = {};
+let works = {}
+let modale = null
+const modalePopup = document.querySelector(".modalePopup")
+
+const StopPropaga = function(e){
+    e.stopPropagation()
+}
 
 
 async function initialisation() {
     try {
-        const result = await fetch(`http://localhost:5678/api/works`);
-        works = await result.json();
-        await Filters();
-        LoadingProjects(0);
+        const result = await fetch(`http://localhost:5678/api/works`)
+        works = await result.json()
+        await Filters()
+        LoadingProjects(0)
+        
+        if(modalePopup != null){
+            modale = true
+            modalePopup.addEventListener("click", function(e){
+                    StopPropaga(e)
+            })
+            showModal(true)
+        }
+        
         if(await verifySession() == true){
-            const elFilters = document.getElementById('filters');
-            const elLogin = document.getElementById('login');
+            const elFilters = document.getElementById('filters')
+            const elLogin = document.getElementById('login')
 
-            elFilters.style.visibility = 'hidden';
-            createModalButtons();
-            elLogin.innerText = "logout";
+            elFilters.style.visibility = 'hidden'
+            createModalButtons()
+            elLogin.innerText = "logout"
             
         }
     } catch(error) {
-        console.error("Oups, il y a une erreur : " + error.message);
-    };
-};
+        console.error("Oups, il y a une erreur : " + error.message)
+    }
+}
 
 
 // Fonction qui a pour but de charger tous les projets trouvé dans l'API : http://localhost:5678/api/works
 // @params Projects = l'ID des catégories à afficher, ID: 0 affiche tous les projets.
 
 function LoadingProjects(Projects){
-    //console.log(works);
+    //console.log(works)
 
     let Fworks = works.filter(function(item){
         if(Projects == 0){
-            return item.categoryId > Projects; 
+            return item.categoryId > Projects 
         } else {
-            return item.categoryId == Projects;
-        };
-    });
+            return item.categoryId == Projects
+        }
+    })
 
-    const content = document.getElementById("allworks");
+    const content = document.getElementById("allworks")
     while (content.firstChild) {
             content.firstChild.remove()
-    };
+    }
 
     for (let i = 0; i < Fworks.length; i++) {            
-        const workf = document.createElement("figure");
-        const workimg = document.createElement("img");
-        const workdesc = document.createElement("figcaption");
-        workf.appendChild(workimg);
-        workf.appendChild(workdesc);
+        const workf = document.createElement("figure")
+        const workimg = document.createElement("img")
+        const workdesc = document.createElement("figcaption")
+        
+        workf.appendChild(workimg)
+        workf.appendChild(workdesc)
 
-        workimg.setAttribute("src", Fworks[i].imageUrl);
-        workimg.setAttribute("alt", Fworks[i].title);
-        workdesc.innerText = Fworks[i].title;
+        workimg.setAttribute("src", Fworks[i].imageUrl)
+        workimg.setAttribute("alt", Fworks[i].title)
+        workdesc.innerText = Fworks[i].title
 
-        const content = document.getElementById("allworks");
-        content.appendChild(workf);
-    };
-};
+        const content = document.getElementById("allworks")
+        content.appendChild(workf)
+    }
+}
 
 // A partir de l'objet works contenant tous les projets et leurs catégories, récuperé grace à la fonction fetch au chargement de la page.
 // La fonction Filter vient isoler dans un Array chaque catégorie pour ensuite générer les boutons avec leurs eventlisteners respectifs.
 // Je ne fais appel à la fonction fetch qu'une seule fois au chargement de la page mais j'aurai très bien pu utilisé une nouvelle fois fetch sur l'url : http://localhost:5678/api/categories
 
 async function Filters() {
-    const contentBouton = document.getElementById("filters");
-    //const FiltersLabels = works;
-    const LabelCategorie = [];
-    //LabelCategorie.add(0);
-    LabelCategorie.push({id: 0, name: 'Tous'});
+    const contentBouton = document.getElementById("filters")
+    //const FiltersLabels = works
+    const LabelCategorie = []
+    //LabelCategorie.add(0)
+    LabelCategorie.push({id: 0, name: 'Tous'})
 
         try {
-            const result = await fetch(`http://localhost:5678/api/categories`);
-            let workscat = await result.json();
+            const result = await fetch(`http://localhost:5678/api/categories`)
+            let workscat = await result.json()
             for (let i = 0; i < workscat.length; i++) {
                 if (!(workscat[i]['id'] in LabelCategorie)) {
-                    LabelCategorie.push({id: workscat[i]['id'], name: workscat[i]['name']});
-                };
-            };
+                    LabelCategorie.push({id: workscat[i]['id'], name: workscat[i]['name']})
+                }
+            }
         } catch(error) {
-            console.error("Oups, il y a une erreur : " + error.message);
-        };
+            console.error("Oups, il y a une erreur : " + error.message)
+        }
 
 
 
         for (let i = 0; i < LabelCategorie.length; i++) {
-            const boutonFilter = document.createElement("button");
-            boutonFilter.classList.add('button_filters');
-            boutonFilter.setAttribute("id", "FiltreCat");
-            boutonFilter.setAttribute("data-id", LabelCategorie[i].id);
-            boutonFilter.innerText = LabelCategorie[i].name;
-            contentBouton.appendChild(boutonFilter);
-        };
+            const boutonFilter = document.createElement("button")
+            boutonFilter.classList.add('button_filters')
+            boutonFilter.setAttribute("id", "FiltreCat")
+            boutonFilter.setAttribute("data-id", LabelCategorie[i].id)
+            boutonFilter.innerText = LabelCategorie[i].name
+            contentBouton.appendChild(boutonFilter)
+        }
 
 
-        const bouton = document.querySelectorAll("#FiltreCat");
+        const bouton = document.querySelectorAll("#FiltreCat")
 
         for (let i = 0; i < bouton.length; i++) {
             bouton[i].addEventListener("click", function() {
-            LoadingProjects(bouton[i].dataset.id);
-            document.querySelectorAll('.selected').forEach((el => el.classList.remove('selected')));
-            bouton[i].classList.add('selected');
-                    //console.log("click sur : " + bouton[i].dataset.id);
-            });
+            LoadingProjects(bouton[i].dataset.id)
+            document.querySelectorAll('.selected').forEach((el => el.classList.remove('selected')))
+            bouton[i].classList.add('selected')
+                    //console.log("click sur : " + bouton[i].dataset.id)
+            })
         }
-};
+}
 
 
 function createModalButtons() {
-    const elBody = document.querySelector('body');
-    const elHeaderMod = document.createElement('div');
-    elHeaderMod.classList.add('headermodale');
-    elHeaderMod.innerHTML = '<a href="#"><i class="fa-solid fa-pen-to-square"></i> mode édition</a>';
-    elBody.prepend(elHeaderMod);
+    const elBody = document.querySelector('body')
+    const elHeaderMod = document.createElement('div')
+    
+    elHeaderMod.classList.add('headermodale')
+    elHeaderMod.innerHTML = '<a href="#"><i class="fa-solid fa-pen-to-square"></i> mode édition</a>'
+    elBody.prepend(elHeaderMod)
     //<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>
-    const TitreProjets = document.querySelector('#TitreProjets');
-    TitreProjets.innerHTML += '<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>';
-};
+    const TitreProjets = document.querySelector('#TitreProjets')
+    TitreProjets.innerHTML += '<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>'
+}
 
 function showModal(show) {
-    const checkModalButton = document.querySelector(".headermodale");
-    const elShowModal = document.querySelector(".modale_container");
+    const checkModalButton = document.querySelector(".headermodale")
+    const elShowModal = document.querySelector(".modale_container")
 
     if(checkModalButton !== null & show == true){
-        elShowModal.style.visibility = "visible";
+        modale = true
+        elShowModal.style.display = null
+        elShowModal.removeAttribute("aria-hidden")
+        elShowModal.setAttribute("aria-modal", true)
 
-        const content = document.getElementById("modaleProjets");
+        const content = document.getElementById("modaleProjets")
         while (content.firstChild) {
                 content.firstChild.remove()
-        };
+        }
 
         for (let i = 0; i < works.length; i++) {            
-            const workf = document.createElement("figure");
-            const workicon = document.createElement("i");
-            workicon.classList.add("fa-solid", "fa-trash-can", "modaleProjetsIcons");
-            workf.appendChild(workicon);
-            const workimg = document.createElement("img");
-            workf.appendChild(workimg);
+            const workf = document.createElement("figure")
+            const workicon = document.createElement("i")
+            workicon.classList.add("fa-solid", "fa-trash-can", "modaleProjetsIcons")
+            workicon.setAttribute("data-id", works[i].id)
+            workf.appendChild(workicon)
+            const workimg = document.createElement("img")
+            workf.appendChild(workimg)
     
-            workimg.setAttribute("src", works[i].imageUrl);
-            workimg.setAttribute("alt", works[i].title);
+            workimg.setAttribute("src", works[i].imageUrl)
+            workimg.setAttribute("alt", works[i].title)
 
-            content.appendChild(workf);
-        };
+            content.appendChild(workf)
+
+            workicon.addEventListener("click", async function(){
+                console.log(workicon.dataset.id)
+                try {
+                    await fetch("http://localhost:5678/api/works/" + workicon.dataset.id, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + window.sessionStorage.getItem("token")}
+                    }).then((retValue) => {
+                        console.log(retValue)
+                        while(content.firstChild) {
+                                content.firstChild.remove()
+                        }
+                        let RemWorks = works.filter(function(projet){
+                                return projet.id != workicon.dataset.id                            
+                        })
+                        works = RemWorks
+                        showModal(true)
+                    })
+                } catch(error){
+                    console.log(error.message)
+                }
+            })
+        }
 
     } else {
-        elShowModal.style.visibility = "hidden";
+        modale = false
+        elShowModal.style.display = "none"
+        elShowModal.setAttribute("aria-hidden", true)
+        elShowModal.removeAttribute("aria-modal")
+        LoadingProjects(0)
     }
-};
+}
 
-await initialisation();
+await initialisation()
 
-const checkModalButton = document.querySelector(".headermodale");
+const elShowModal = document.querySelector(".modale_container")
+if(elShowModal != null){
+    elShowModal.addEventListener("click", function(){
+        showModal()
+    })
+}
+
+const checkModalButton = document.querySelector(".headermodale")
 if(checkModalButton != null){
     checkModalButton.addEventListener("click", function(){
-        showModal(true);
-    });
-};
+        console.log('click sur modale')
+        //modale = true
+        showModal(true)
+    })
+}
 
-const hidemodale = document.querySelector("#hideModale");
+const hidemodale = document.querySelector("#hideModale")
 if(hidemodale != null){
     hidemodale.addEventListener("click", function(){
-        console.log('click');
-        showModal();
-    });
-};
+        modale = false
+        showModal()
+        LoadingProjects(0)
+    })
+}
 
-const elLogin = document.getElementById('login');
+const elLogin = document.getElementById('login')
 elLogin.addEventListener("click", async function(event){
     if(await verifySession() == true){
-        window.sessionStorage.removeItem("userId");
-        window.sessionStorage.removeItem("token");
-        window.location = "./index.html";
+        window.sessionStorage.removeItem("userId")
+        window.sessionStorage.removeItem("token")
+        window.location = "./index.html"
     } else {
-        window.location = "./login.html";
+        window.location = "./login.html"
     }
-});
+})
+

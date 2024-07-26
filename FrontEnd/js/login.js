@@ -1,5 +1,9 @@
 import { verifySession } from './session.js';
 const loginform = document.getElementById("login");
+const TextInfo = document.createElement("span");
+const mainContent = document.querySelector("main");
+
+TextInfo.classList.add("loginInfo");
 
 async function login(loginemail, loginpassword){
     
@@ -16,10 +20,15 @@ async function login(loginemail, loginpassword){
     results = await results.json();
     
     if(results.userId && results.token){
+
         window.sessionStorage.setItem("userId", results.userId);
         window.sessionStorage.setItem("token", results.token);
         return true
+
     } else {
+        
+        TextInfo.innerText = "Mauvais mot de passe ou email !";
+        loginform.prepend(TextInfo);
         return false
     }
 };
@@ -27,11 +36,7 @@ async function login(loginemail, loginpassword){
 function alreadyLogged(){
     if(verifySession() == true){
         loginform.remove();
-        const TextInfo = document.createElement("span");
-        const mainContent = document.querySelector("main");
-        
-        TextInfo.classList.add("loginInfo");
-        TextInfo.innerHTML = "Vous êtes déja connecté !";
+        TextInfo.innerText = "Vous êtes déja connecté !";
 
         mainContent.appendChild(TextInfo);
     } else {
