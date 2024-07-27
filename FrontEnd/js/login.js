@@ -1,12 +1,11 @@
 import { verifySession } from './session.js';
+
 const loginform = document.getElementById("login");
 const TextInfo = document.createElement("span");
 const mainContent = document.querySelector("main");
-
 TextInfo.classList.add("loginInfo");
 
-async function login(loginemail, loginpassword){
-    
+const login = async function(loginemail, loginpassword){
     let UserLogin = {};
     UserLogin.email = loginemail;
     UserLogin.password = loginpassword;
@@ -33,7 +32,7 @@ async function login(loginemail, loginpassword){
     }
 };
 
-function alreadyLogged(){
+const alreadyLogged = function(){
     if(verifySession() == true){
         loginform.remove();
         TextInfo.innerText = "Vous êtes déja connecté !";

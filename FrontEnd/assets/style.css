@@ -106,8 +106,12 @@ nav li {
 	font-size: 1.2em;
 	font-family: "Work Sans", sans-serif;
 	font-optical-sizing: auto;
-	font-weight: 600;
+	font-weight: 500;
 	font-style: normal;
+}
+
+li a.active{
+	font-weight: bold;
 }
 
 a {
@@ -184,7 +188,7 @@ a:hover {
 	flex-direction: column;
 }
 
-input {
+input, select {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
@@ -290,11 +294,12 @@ main{
 }
 
 .modaleProjets {
-	margin-left: 20px;
+	width: 80%;
 	font-family: 'Work Sans';
 	font-weight: 600;
 	color:#3D3D3D;
 	font-size: 16px;
+	margin-left: 20px;
 }
 
 .headermodale {
@@ -328,27 +333,33 @@ main{
 	width: 100%;
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.4);
-	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
 .modalePopup{
+	display: none;
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	min-width: 370px;
-	min-height: 600px;
-	width: 25%;
-	padding: 20px;	
+	min-width: 400px;
+	width: 26%;
 	border-radius: 20px;
 	background-color: white;
+	justify-content: center;
+	align-items: center;
 }
 
-#hideModale {
+.modalePopup h2{
+	font-family: 'Work Sans';
+	font-weight: 500;
+	color: #000;
+}
+
+#hideModale, #hideModale a{
 	width: 20px;
 	height: 20px;
-	margin-left: auto;
+	margin-left: calc(100% - 40px);
 	margin-right: 0;
 
 }
@@ -359,17 +370,19 @@ main{
 	text-align: center;
 }
 
+#returnModale1, #returnModale1 a{
+	width: 20px;
+	height: 20px;
+	margin-left: 0;
+}
+
 #modaleProjets {
-	margin-top: 40px;
-	margin-left: auto;
-	margin-right: auto;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 10px;
+	box-sizing: border-box;
 	width: 100%;
-	max-width: 440px;
-	padding-left: 20px;
-	padding-right: 20px;
+	margin-top: 40px;
+	gap: 10px
 }
 
 #modaleProjets figure{
@@ -388,19 +401,21 @@ main{
 	left: calc(100% - 25px);
 	width: 20px;
 	height: 20px;
-	text-align: center;
-	line-height: 20px;
-	font-size: 0.9em;
+	text-align: center;	
+	line-height: 20px;	
+	font-size: 0.8em;
 	color: white;
 	background-color: black;
 	border-radius: 3px;
 }
 
-
-
-.modalePopups hr{
+hr{
+	box-sizing: border-box;
+  	border: 0 none transparent;
+	margin-top: 40px;
 	width: 100%;
-	border-top: 1px solid #3D3D3D;
+	border-top: 1px solid lightgrey;
+	
 }
 
 input[type="submit"]{
@@ -435,3 +450,94 @@ footer ul{
 	margin-top: auto;
 	margin-bottom: auto;
 }
+#displayModale1 {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 20px;	
+	margin-left: 50px;	
+	margin-right: 50px;
+	margin-bottom: 20px;
+	justify-content: center;
+	align-items: center;
+	max-width: 420px;
+}
+
+#displayModale2 {
+	width: 100%;
+	margin-top: 20px;	
+	margin-left: 50px;	
+	margin-right: 50px;
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	max-width: 420px;
+}
+
+#catPhoto {
+	box-sizing: border-box;
+	width: 100%;
+	padding-top: 30px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+}
+
+#displayModale2 input, #displayModale2 select{
+	width: 100%;
+}
+
+#displayModale2 input[type=file]{
+	display: none;
+}
+
+#uploadPhoto {
+	margin-top: 20px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 200px;
+	background-color: #E8F1F6;
+	align-items: center;
+}
+
+#uploadPhoto label{
+	margin-top: 20px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	align-items: center;
+}
+
+
+#btnAddphoto{
+	margin-top: 15px;
+	margin-bottom: 15px;
+	font-family: 'Work Sans';
+	color: #306685;
+	font-size: 16px;
+	font-weight: 500;
+	padding: 10px;
+	background: #CBD6DC;
+	text-align: center;
+	line-height: 16px;
+	border-radius: 50px ;
+	width: 170px;
+}
+
+#textAddphoto{
+	font-size: 12px;
+}
+
+
+#svg-uploadPhoto{
+	color: #CBD6DC;
+	width: 76px;
+	height: 76px;
+}
+
+
+
