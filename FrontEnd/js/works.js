@@ -2,6 +2,7 @@ import { verifySession } from './session.js'
 
 let works = {}
 let workscat = {}
+let inputsModale2 = [];
 
 const modalePopup = document.querySelector(".modalePopup")
 
@@ -208,6 +209,15 @@ addPhoto.addEventListener("click", function(){
     document.querySelector('#displayModale1').style.display = 'none'
     document.querySelector('#displayModale2').style.display = null
     document.querySelector('#returnModale1').style.display = null
+
+    const CatPhoto = document.querySelector('#CategoriePhoto')
+
+    for(let i = 0; i < workscat.length; i++){
+        let Eloption = document.createElement("option")
+        Eloption.value = workscat[i].id
+        Eloption.text = workscat[i].name
+        CatPhoto.append(Eloption)
+    }
 })
 
 const returnModale1 = document.querySelector('#returnModale1')
@@ -217,5 +227,99 @@ returnModale1.addEventListener("click", function(){
     document.querySelector('#returnModale1').style.display = 'none'
 })
 
+const inputModal2 = document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEach(e => {
+    if(e.value === ""){
+        inputsModale2.push(e.id)
+    }
+    // e.addEventListener("cancel", function(){
+    //     document.querySelector('#btnValidUpload').setAttribute('disabled', true)
+    //     inputsModale2.push(e.id)
+    // })
+
+    e.addEventListener("change", function(){
+        if(e.id === "images" && e.value !== ""){
+            var oFReader = new FileReader();
+            oFReader.readAsDataURL(e.files[0]);
+
+            document.querySelectorAll('#labelUploadPhoto svg, #labelUploadPhoto span').forEach(el => el.remove())
+            const labelUpPhoto = document.querySelector('#labelUploadPhoto')
+            const labelUpPhotoImg = document.createElement('img')
+
+            oFReader.onload = function (ReaderEvent) {
+                labelUpPhotoImg.src = ReaderEvent.target.result
+            }
+            labelUpPhotoImg.style = "box-sizing:border-box;height:100%;object-fit:contain;"
+            while (labelUpPhoto.firstChild) {
+                labelUpPhoto.firstChild.remove()
+            }
+            labelUpPhoto.appendChild(labelUpPhotoImg)
+        }
+        if(e.value !== null || e.value !== ""){
+            inputsModale2 = inputsModale2.filter(el => el !== e.id)
+            if(inputsModale2.length === 0){
+                document.querySelector('#btnValidUpload').removeAttribute('disabled')
+            } else {
+                if(e.value === ""){
+                    inputsModale2.push(e.id)
+                }
+            }
+        } else {
+            inputsModale2.push(e.id)
+        }
+    })
+})
+
+const output = document.querySelector("#output")
+const uploadform = document.querySelector('#uploadProject')
+uploadform.addEventListener("submit", async function(event){
+    event.preventDefault()
+    const title = document.getElementById('TitrePhoto').value
+    const category = document.getElementById('CategoriePhoto').value
+    const file = document.getElementById('images').files[0]
+
+    if(inputsModale2.length === 0){
+        let formData = new FormData();
+
+        formData.append("title", title)
+        formData.append("category", category)
+        formData.append("image", file)
+
+        console.log("FormData before validation:", Array.from(formData.entries()));
+
+        // l'envoyer au serveur
+        fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${window.sessionStorage.getItem('token')}`
+            },
+            body: formData
+        })
+        .then ((res) => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                alert("Erreur lors de l'ajout du projet")
+            }
+        })
 
 
+
+
+
+
+        try {
+            let results = await fetch("http://localhost:5678/api/works", {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${window.sessionStorage.getItem("token")}`
+                },
+                body: formData
+            });
+
+            results = await results.json();
+            console.log(results)
+        } catch(error){
+            output.innerHTML = error.message
+            console.log(error)
+        }}
+})
