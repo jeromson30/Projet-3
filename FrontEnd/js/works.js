@@ -6,34 +6,46 @@ let inputsModale2 = [];
 
 const modalePopup = document.querySelector(".modalePopup")
 
+// Fonction afin de limiter la propagation de certains évenements
 const StopPropaga = function(e){
     e.stopPropagation()
 }
 
+// Fonction asynchrone d'initialisation pour recuperer les projets dans la BDD via l'API et fonction fetch et en stockant les resultats dans un objet JSON : works, creer les boutons pour les filtres (Fonction Filters()), charger les projets dans la page.
+// Vérification de l'existence d'un element token dans le sessionStorage avec la fontion asynchrone verifySession() si une session est trouvé => création des boutons vers la modale et masquage des boutons des filtres.
 const initialisation = async function() {
     try {
+        // Récupère les projets depuis l'API
         const result = await fetch(`http://localhost:5678/api/works`)
+        //Si pas d'erreur, on stock le résultat dans l'objet works au format JSON
         works = await result.json()
+
+        // Fonction pour la création des boutons pour filtrer en asynchrone car on attend le résultat de la fonction fetch qui va récuperer le nom des catégories des projets dans la BDD.
         await Filters()
+        //Chargement des projets dans la page web.
         LoadingProjects(0)
 
+        //vérification de la présence d'un token dans le storage location
         if(await verifySession() == true){
             const elFilters = document.getElementById('filters')
             const elLogin = document.getElementById('login')
 
             elFilters.style.visibility = 'hidden'
+            //Si un token est détecté création des boutons modales et changement du texte de login à logout
             createModalButtons()
             elLogin.innerText = "logout"
         }
 
+        // Si le pop up de la modale existe de bien, ajout de l'évenement click sur la div pour stopper la propagation de l'évènement de click de la div parente.
         if(modalePopup != null){modalePopup.addEventListener("click", function(e){StopPropaga(e)})}
 
     } catch(error) {
-        throw("Oups, il y a une erreur : " + error.message)
+        // Si la fonction fetch retourne une erreur on l'affiche
+        console.error("Oups, il y a une erreur : " + error.message)
     }
 }
 
-// Fonction qui a pour but de charger tous les projets trouvé dans l'API : http://localhost:5678/api/works
+// Fonction qui a pour but de charger tous les projets trouvé dans la BDD : http://localhost:5678/api/works
 // @params Projects = l'ID des catégories à afficher, ID: 0 affiche tous les projets.
 const LoadingProjects = function(Projects){
     let Fworks = works.filter(function(item){
@@ -63,17 +75,18 @@ const LoadingProjects = function(Projects){
     }
 }
 
-// A partir de l'objet works contenant tous les projets et leurs catégories, récuperé grace à la fonction fetch au chargement de la page.
-// La fonction Filter vient isoler dans un Array chaque catégorie pour ensuite générer les boutons avec leurs eventlisteners respectifs.
-// Je ne fais appel à la fonction fetch qu'une seule fois au chargement de la page mais j'aurai très bien pu utilisé une nouvelle fois fetch sur l'url : http://localhost:5678/api/categories
+// Fonction asynchrone qui récupère le nom des catégories et leurs ID dans la BDD via la fonction fetch, on les stock dans l'objet workscat
+// Création tableau appelé LabelCategorie, ajout de l'ID 0 défini pour afficher toutes les catégories de projet puis ajout des catégories enregistrées dans workscat
 const Filters = async function(){
     const contentBouton = document.getElementById("filters")
     const LabelCategorie = []
+    // ajout de l'ID 0 dans le tableau LabelCategorie pour creer le bouton qui servira à afficher toutes les catégories.
     LabelCategorie.push({id: 0, name: 'Tous'})
 
         try {
             const result = await fetch(`http://localhost:5678/api/categories`)
             workscat = await result.json()
+            // Boucle For pour inserer les catégories dans le tableau LabelCategorie (au passage on vérifie que l'ID n'existe pas dans LabelCategorie afin d'éviter les doublons)
             for (let i = 0; i < workscat.length; i++) {
                 if (!(workscat[i]['id'] in LabelCategorie)) {
                     LabelCategorie.push({id: workscat[i]['id'], name: workscat[i]['name']})
@@ -83,6 +96,7 @@ const Filters = async function(){
             console.error("Oups, il y a une erreur : " + error.message)
         }
 
+        // Boucle à partir de LabelCategorie afin de creer les boutons des filtres
         for (let i = 0; i < LabelCategorie.length; i++) {
             const boutonFilter = document.createElement("button")
             boutonFilter.classList.add('button_filters')
@@ -92,6 +106,7 @@ const Filters = async function(){
             contentBouton.appendChild(boutonFilter)
         }
 
+        // Cible tous les boutons des filtres afin d'écouter les évènements click et filtrer sur les projets si l'évènement est déclenché par l'utilisateur.
         const bouton = document.querySelectorAll("#FiltreCat")
         for (let i = 0; i < bouton.length; i++) {
             bouton[i].addEventListener("click", function() {
@@ -102,73 +117,92 @@ const Filters = async function(){
         }
 }
 
+//Fonction pour creer le bandeau modale au dessus du header et le texte modifier à coté du titre "Mes projets".
 const createModalButtons = function(){
-    console.log('CREATION BOUTON MODALE')
     const elHeaderMod = document.createElement('div')
     elHeaderMod.classList.add('headermodale')
     elHeaderMod.innerHTML = '<a href="#"><i class="fa-solid fa-pen-to-square"></i> mode édition</a>'
     document.body.prepend(elHeaderMod)
-    //<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>
     const TitreProjets = document.querySelector('#TitreProjets')
     TitreProjets.innerHTML += '<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>'
 }
 
+const loadProjectInModal = function(){
+    const content = document.getElementById("modaleProjets")
+        
+    //réinitialisation des projets en les supprimant
+    while (content.firstChild) {
+            content.firstChild.remove()
+    }
+    //Chargement des projets via la boucle For à partir de l'objet JSON works
+    for (let i = 0; i < works.length; i++) {            
+        const workf = document.createElement("figure")
+        const workicon = document.createElement("i")
+        workicon.classList.add("fa-solid", "fa-trash-can", "modaleProjetsIcons")
+        workicon.setAttribute("data-id", works[i].id)
+        workf.appendChild(workicon)
+        
+        const workimg = document.createElement("img")
+        workf.appendChild(workimg)
+            
+        workimg.setAttribute("src", works[i].imageUrl)
+        workimg.setAttribute("alt", works[i].title)
+                    
+        content.appendChild(workf)
+    }
+
+    //Selection de tous les boutons supprimer de chaque projet
+    document.querySelectorAll(".modaleProjetsIcons").forEach(workicon => {
+        // Création de l'event click sur chaque projet qui a pour fonction de supprimer un projet de la base de donnée
+         workicon.addEventListener("click", async function(){
+            try {
+                await fetch("http://localhost:5678/api/works/" + workicon.dataset.id, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + window.sessionStorage.getItem("token")}
+                })
+                    // Lorsque nous avons le callback de l'API, 1 - suppression de tous les projets affichés dans le DOM, 2 - on supprime l'ID du projet dans l'objet JSON works puis on réaffiche le tout.
+                    // Ca permet de ne pas faire à nouveau un fetch sur tous les projets.
+                .then(function(){
+                        //suppression du projet supprimé et on réaffiche la modale.
+                        let RemWorks = works.filter(function(projet){return projet.id != workicon.dataset.id})
+
+                        works = RemWorks
+                        showModal(true)
+                })
+                    // si une erreur se présent on l'affiche
+                } catch(error){console.error(error.message)}
+        })
+    })
+}
+
+//Fonction pour afficher la modale
+//@params show: Boolean - si True alors on affiche la modale sinon pour toutes autres valeurs on cache tous les élements liés à la modale et on recharge les projets sur la page d'accueil.
 const showModal = function(show){
     const elShowModal = document.querySelector(".modale_container")
     const checkModalButton = document.querySelector(".headermodale")
 
+    //Si le bandeau modale existe (créér à partir de la fonction createModalButtons) et si le paramètre show = true alors on affiche la modale.
     if(checkModalButton !== null & show === true){
-        console.log("Exécution fonction modale")
+
         elShowModal.style.display = null
         elShowModal.style.display = "flex"
         document.querySelector('#displayModale1').style.display = null
         document.querySelector('#returnModale1').style.display = 'none'
         document.querySelector('#displayModale2').style.display = 'none'
 
-        const content = document.getElementById("modaleProjets")
-        
-        while (content.firstChild) {
-                content.firstChild.remove()
-        }
 
-        for (let i = 0; i < works.length; i++) {            
-            const workf = document.createElement("figure")
-            const workicon = document.createElement("i")
-            workicon.classList.add("fa-solid", "fa-trash-can", "modaleProjetsIcons")
-            workicon.setAttribute("data-id", works[i].id)
-            workf.appendChild(workicon)
-            const workimg = document.createElement("img")
-            workf.appendChild(workimg)
-    
-            workimg.setAttribute("src", works[i].imageUrl)
-            workimg.setAttribute("alt", works[i].title)
-            
-            content.appendChild(workf)
+        loadProjectInModal()
 
-            workicon.addEventListener("click", async function(){
-            try {
-                await fetch("http://localhost:5678/api/works/" + workicon.dataset.id, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + window.sessionStorage.getItem("token")}
-                }).then((retValue) => {
-                    console.log(retValue)
-                    while(content.firstChild) {
-                            content.firstChild.remove()
-                    }
-                    let RemWorks = works.filter(function(projet){return projet.id != workicon.dataset.id})
-                        works = RemWorks
-                        showModal(true)
-                    })
-                } catch(error){throw(error.message)}
-            })
-        }
     } else {
         LoadingProjects(0)
         elShowModal.style.display = 'none'
     }
 }
 
+// Initialisation des fonctions vitales de la page web.
 await initialisation()
+
+
 
 const elShowModal = document.querySelector(".modale_container")
 if(elShowModal != null){
@@ -178,12 +212,12 @@ if(elShowModal != null){
     })
 }
 
-const checkModalButton = document.querySelector(".headermodale")
-if(checkModalButton != null){
-    checkModalButton.addEventListener("click", function(e){
+document.querySelectorAll(".headermodale, .modaleProjets").forEach(function(element){
+    element.addEventListener("click", function(){
         showModal(true)
     })
-}
+})
+
 
 const hidemodale = document.querySelector("#hideModale")
 if(hidemodale != null){
@@ -212,8 +246,17 @@ addPhoto.addEventListener("click", function(){
 
     const CatPhoto = document.querySelector('#CategoriePhoto')
 
+    while (CatPhoto.firstChild) {
+        CatPhoto.firstChild.remove()
+    }
+
+    const Eloption = document.createElement("option")
+    Eloption.value = ""
+    Eloption.text = ""
+    CatPhoto.append(Eloption)
+
     for(let i = 0; i < workscat.length; i++){
-        let Eloption = document.createElement("option")
+        const Eloption = document.createElement("option")
         Eloption.value = workscat[i].id
         Eloption.text = workscat[i].name
         CatPhoto.append(Eloption)
@@ -222,26 +265,28 @@ addPhoto.addEventListener("click", function(){
 
 const returnModale1 = document.querySelector('#returnModale1')
 returnModale1.addEventListener("click", function(){
+    loadProjectInModal()
     document.querySelector('#displayModale1').style.display = null
     document.querySelector('#displayModale2').style.display = 'none'
     document.querySelector('#returnModale1').style.display = 'none'
 })
 
-const inputModal2 = document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEach(e => {
-    if(e.value === ""){
+document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEach(e => {
+    if(e.value === "" || e.value === null){
         inputsModale2.push(e.id)
     }
-    // e.addEventListener("cancel", function(){
-    //     document.querySelector('#btnValidUpload').setAttribute('disabled', true)
-    //     inputsModale2.push(e.id)
-    // })
-
     e.addEventListener("change", function(){
         if(e.id === "images" && e.value !== ""){
+
+            if (e.files[0].size > 4 * 1024 * 1024) {
+                alert("La taille de l'image ne doit pas dépasser 4Mo.")
+                return
+            }
+
             var oFReader = new FileReader();
             oFReader.readAsDataURL(e.files[0]);
 
-            document.querySelectorAll('#labelUploadPhoto svg, #labelUploadPhoto span').forEach(el => el.remove())
+            document.querySelectorAll('#labelUploadPhoto svg, #labelUploadPhoto span').forEach(el => el.style.display = "none")
             const labelUpPhoto = document.querySelector('#labelUploadPhoto')
             const labelUpPhotoImg = document.createElement('img')
 
@@ -249,14 +294,14 @@ const inputModal2 = document.querySelectorAll('#displayModale2 input, #displayMo
                 labelUpPhotoImg.src = ReaderEvent.target.result
             }
             labelUpPhotoImg.style = "box-sizing:border-box;height:100%;object-fit:contain;"
-            while (labelUpPhoto.firstChild) {
-                labelUpPhoto.firstChild.remove()
-            }
+
             labelUpPhoto.appendChild(labelUpPhotoImg)
         }
         if(e.value !== null || e.value !== ""){
             inputsModale2 = inputsModale2.filter(el => el !== e.id)
+
             if(inputsModale2.length === 0){
+                
                 document.querySelector('#btnValidUpload').removeAttribute('disabled')
             } else {
                 if(e.value === ""){
@@ -273,40 +318,19 @@ const output = document.querySelector("#output")
 const uploadform = document.querySelector('#uploadProject')
 uploadform.addEventListener("submit", async function(event){
     event.preventDefault()
-    const title = document.getElementById('TitrePhoto').value
-    const category = document.getElementById('CategoriePhoto').value
+    const title = document.getElementById('TitrePhoto')
+    const category = document.getElementById('CategoriePhoto')
     const file = document.getElementById('images').files[0]
 
     if(inputsModale2.length === 0){
         let formData = new FormData();
 
-        formData.append("title", title)
-        formData.append("category", category)
+        formData.append("title", title.value)
+        formData.append("category", category.value)
         formData.append("image", file)
 
-        console.log("FormData before validation:", Array.from(formData.entries()));
-
-        // l'envoyer au serveur
-        fetch("http://localhost:5678/api/works", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${window.sessionStorage.getItem('token')}`
-            },
-            body: formData
-        })
-        .then ((res) => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                alert("Erreur lors de l'ajout du projet")
-            }
-        })
-
-
-
-
-
-
+        //console.log("FormData before validation:", Array.from(formData.entries()));
+  
         try {
             let results = await fetch("http://localhost:5678/api/works", {
                 method: 'POST',
@@ -316,10 +340,29 @@ uploadform.addEventListener("submit", async function(event){
                 body: formData
             });
 
-            results = await results.json();
-            console.log(results)
+            results = await results.json()
+            
+            title.value = ""
+            category.value = ""
+
+            document.querySelectorAll('#labelUploadPhoto svg, #labelUploadPhoto span').forEach(el => el.style.display = 'flex')
+            document.querySelector('#labelUploadPhoto img').remove()
+
+            try {
+                // Récupère les projets depuis l'API
+                const result = await fetch(`http://localhost:5678/api/works`)
+                //Si pas d'erreur, on stock le résultat dans l'objet works au format JSON
+                works = await result.json()
+            } catch(err){
+                console.error(err.message)
+            }
+
+            alert("Projet ajouté avec succès!")
+
         } catch(error){
             output.innerHTML = error.message
-            console.log(error)
-        }}
+            console.log(error.message)
+        }
+    }
 })
+

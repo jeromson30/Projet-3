@@ -504,7 +504,6 @@ footer ul{
 
 
 #btnAddphoto{
-	
 	margin-top: 15px;
 	margin-bottom: 15px;
 	font-family: 'Work Sans';
@@ -517,6 +516,7 @@ footer ul{
 	line-height: 16px;
 	border-radius: 50px ;
 	width: 170px;
+	justify-content: center;
 }
 
 #textAddphoto{
