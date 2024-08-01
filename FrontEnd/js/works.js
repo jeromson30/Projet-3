@@ -2,7 +2,7 @@ import { verifySession } from './session.js'
 
 let works = {}
 let workscat = {}
-let inputsModale2 = [];
+let inputsModale2 = []
 
 const modalePopup = document.querySelector(".modalePopup")
 
@@ -347,6 +347,7 @@ uploadform.addEventListener("submit", async function(event){
 
             document.querySelectorAll('#labelUploadPhoto svg, #labelUploadPhoto span').forEach(el => el.style.display = 'flex')
             document.querySelector('#labelUploadPhoto img').remove()
+            //document.querySelector('#btnValidUpload').setAttribute('disabled')
 
             try {
                 // Récupère les projets depuis l'API

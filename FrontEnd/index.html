@@ -6,11 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self'; script-src-elem 'self';">
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
         integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" >
-	<meta name="description" content="">
+	<meta name="description" content="Site de la photographe Sophie Bluel">
 	<link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
@@ -34,7 +35,7 @@
 			<div id="displayModale1">
 				<h2 class="modaleTitle">Galerie Photo</h2>
 				<div id="modaleProjets"></div>
-				<hr noshade>
+				<hr>
 				<input type="submit" id="addPhoto" value="Ajouter une photo">
 			</div>
 			<div id="displayModale2">
@@ -47,15 +48,15 @@
 							
 							<span id="textAddphoto">jpg, png : 4mo max</span>
 						</label>
-						<input type="file" id="images" name="file" required/>
+						<input type="file" id="images" name="file" required>
 					</div>
 					<label id="titrePhoto" for="TitrePhoto">Titre</label>
 					<input type="text" name="TitrePhoto" id="TitrePhoto" required>
 					<label id="catPhoto" for="CategoriePhoto">Catégorie :</label>
 					<select id="CategoriePhoto" name="CategoriePhoto" required>
-						<option value=""></option>
+						<option value="">.</option>
 					</select>
-					<hr noshade>
+					<hr>
 					<div id="output"></div>
 					<input id="btnValidUpload" type="submit" value="Valider" disabled>
 				</form>
@@ -100,6 +101,6 @@
 			</ul>
 		</nav>
 	</footer>
-	<script type="module" src="js/works.js"></script>
+	<script type="module" src="./js/works.js"></script>
 </body>
 </html>
