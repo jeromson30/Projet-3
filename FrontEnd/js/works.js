@@ -76,7 +76,7 @@ const LoadingProjects = function(Projects){
 }
 
 // Fonction asynchrone qui récupère le nom des catégories et leurs ID dans la BDD via la fonction fetch, on les stock dans l'objet workscat
-// Création tableau appelé LabelCategorie, ajout de l'ID 0 défini pour afficher toutes les catégories de projet puis ajout des catégories enregistrées dans workscat
+// Création tableau appelé LabelCategorie, création de l'ID 0 pour afficher toutes les catégories des projets puis une boucle ajoute les autres catégories enregistrées dans l'objet workscat (fetch)
 const Filters = async function(){
     const contentBouton = document.getElementById("filters")
     const LabelCategorie = []
@@ -117,7 +117,7 @@ const Filters = async function(){
         }
 }
 
-//Fonction pour creer le bandeau modale au dessus du header et le texte modifier à coté du titre "Mes projets".
+//Fonction pour creer le bandeau modale au dessus du header et pour modifier le texte à coté du titre "Mes projets".
 const createModalButtons = function(){
     const elHeaderMod = document.createElement('div')
     elHeaderMod.classList.add('headermodale')
@@ -203,22 +203,24 @@ const showModal = function(show){
 await initialisation()
 
 
-
+// Fermeture de la modale lorsque qu'un click se fait à l'extérieur de la fenêtre, avec l'utilisation de la fonction StopPropaga qui a pour but de ne pas propager l'event click sur les elements enfants de modale_container
 const elShowModal = document.querySelector(".modale_container")
 if(elShowModal != null){
     elShowModal.addEventListener("click", function(e){
         StopPropaga(e)
         showModal()
+        LoadingProjects(0)
     })
 }
 
+// Ouverture de la modale lorsque l'event click est déclenché sur le bandeau supérieur modale et le texte "modifier"
 document.querySelectorAll(".headermodale, .modaleProjets").forEach(function(element){
     element.addEventListener("click", function(){
         showModal(true)
     })
 })
 
-
+// Fermeture de la modale lors du click sur la croix
 const hidemodale = document.querySelector("#hideModale")
 if(hidemodale != null){
     hidemodale.addEventListener("click", function(){
@@ -227,6 +229,7 @@ if(hidemodale != null){
     })
 }
 
+// Lors du click sur Logout, suppression de l'UserID et du Token du sessionStorage.
 const elLogin = document.getElementById('login')
 elLogin.addEventListener("click", async function(event){
     if(await verifySession() == true){
