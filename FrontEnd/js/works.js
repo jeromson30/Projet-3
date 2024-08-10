@@ -126,7 +126,7 @@ const createModalButtons = function(){
     const TitreProjets = document.querySelector('#TitreProjets')
     TitreProjets.innerHTML += '<span class="modaleProjets"><a href="#"><i class="fa-solid fa-pen-to-square"></i> modifier</a></span>'
 }
-
+//Fonction pour generer les projects dans la modale.
 const loadProjectInModal = function(){
     const content = document.getElementById("modaleProjets")
         
@@ -241,6 +241,7 @@ elLogin.addEventListener("click", async function(event){
     }
 })
 
+// Création de l'action pour ajouter une photo
 const addPhoto = document.querySelector('#addPhoto')
 addPhoto.addEventListener("click", function(){
     document.querySelector('#displayModale1').style.display = 'none'
@@ -248,7 +249,7 @@ addPhoto.addEventListener("click", function(){
     document.querySelector('#returnModale1').style.display = null
 
     const CatPhoto = document.querySelector('#CategoriePhoto')
-
+    //Boucle qui vient supprimer les images si jamais, il y a une.
     while (CatPhoto.firstChild) {
         CatPhoto.firstChild.remove()
     }
