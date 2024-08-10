@@ -249,16 +249,18 @@ addPhoto.addEventListener("click", function(){
     document.querySelector('#returnModale1').style.display = null
 
     const CatPhoto = document.querySelector('#CategoriePhoto')
-    //Boucle qui vient supprimer les images si jamais, il y a une.
+    //Boucle qui vient remettre à zéro les catégories des projets.
     while (CatPhoto.firstChild) {
         CatPhoto.firstChild.remove()
     }
 
+    //Creation d'un element <option> vide pour la balise <select>
     const Eloption = document.createElement("option")
     Eloption.value = ""
     Eloption.text = ""
     CatPhoto.append(Eloption)
 
+    //Boucle qui vient incrémenter de balises <option> la balise <select> avec les catégories des projets à l'ouverture de la page modale.
     for(let i = 0; i < workscat.length; i++){
         const Eloption = document.createElement("option")
         Eloption.value = workscat[i].id
@@ -267,6 +269,7 @@ addPhoto.addEventListener("click", function(){
     }
 })
 
+ //Ajout de l'évenement lors du click sur la flèche retour qui à pour fonction de masquer le displayModale2 et de rafraichir les projets.
 const returnModale1 = document.querySelector('#returnModale1')
 returnModale1.addEventListener("click", function(){
     loadProjectInModal()
@@ -276,24 +279,44 @@ returnModale1.addEventListener("click", function(){
 })
 
 document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEach(e => {
+    // si la valeur d'un element est vide ou null alors on ajoute le nom de l'élement dans un tableau.
     if(e.value === "" || e.value === null){
         inputsModale2.push(e.id)
     }
+
+    // ajout de l'évenement change sur les inputs et balise select présent dans la displayModale2 afin de vérifier leurs valeurs
     e.addEventListener("change", function(){
+
+        // Si l'élement id est images (type=file) et que sa valeur n'est pas vide.
         if(e.id === "images" && e.value !== ""){
 
+            // vérification que la taille de l'image ne soir pas supérieur à 4 194 304 d'octets soit 4Mo
             if (e.files[0].size > 4 * 1024 * 1024) {
                 alert("La taille de l'image ne doit pas dépasser 4Mo.")
                 return
             }
 
+            // création d'un regexp des extensions images autorisés
+            var allowedExtensions = 
+            /(\.jpg|\.jpeg|\.png)$/i;
+            
+            console.log(e.files[0].name)
+            // vérification que l'extension des fichiers soient bien JPG ou PNG
+            if (!allowedExtensions.exec(e.files[0].name)) {
+                alert("Seul les formats JPG et PNG sont autorisés.")
+                return
+            }
+
+            //Fonction, pour venir lire le fichier ajouté
             var oFReader = new FileReader();
             oFReader.readAsDataURL(e.files[0]);
 
+            //On créé les élements qui font permettre d'afficher l'image
             document.querySelectorAll('#labelUploadPhoto svg, #labelUploadPhoto span').forEach(el => el.style.display = "none")
             const labelUpPhoto = document.querySelector('#labelUploadPhoto')
             const labelUpPhotoImg = document.createElement('img')
 
+            //Chargement de l'image dans la balise <img>
             oFReader.onload = function (ReaderEvent) {
                 labelUpPhotoImg.src = ReaderEvent.target.result
             }
@@ -301,13 +324,16 @@ document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEa
 
             labelUpPhoto.appendChild(labelUpPhotoImg)
         }
+
+        // si les autres éléments ne sont pas vides ou nulles alors on supprime les éléments du tableau inputsModale2. Dés que le tableau est vide on dévérrouille le bouton submit
+        // Sinon on rajoute l'élement au tableau
         if(e.value !== null || e.value !== ""){
             inputsModale2 = inputsModale2.filter(el => el !== e.id)
 
             if(inputsModale2.length === 0){
-                
                 document.querySelector('#btnValidUpload').removeAttribute('disabled')
             } else {
+                // Dans le cas ou tous les éléments ont une valeur, que le bouton submit était activé mais qu'on a supprimé une valeur avant de soumettre le formulaire
                 if(e.value === ""){
                     inputsModale2.push(e.id)
                 }
@@ -332,8 +358,6 @@ uploadform.addEventListener("submit", async function(event){
         formData.append("title", title.value)
         formData.append("category", category.value)
         formData.append("image", file)
-
-        //console.log("FormData before validation:", Array.from(formData.entries()));
   
         try {
             let results = await fetch("http://localhost:5678/api/works", {
@@ -354,7 +378,7 @@ uploadform.addEventListener("submit", async function(event){
             //document.querySelector('#btnValidUpload').setAttribute('disabled')
 
             try {
-                // Récupère les projets depuis l'API
+                // Récupère à nouveau les projets depuis l'API
                 const result = await fetch(`http://localhost:5678/api/works`)
                 //Si pas d'erreur, on stock le résultat dans l'objet works au format JSON
                 works = await result.json()
