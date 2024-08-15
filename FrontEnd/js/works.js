@@ -279,6 +279,9 @@ returnModale1.addEventListener("click", function(){
 })
 
 document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEach(e => {
+
+    const labelUpPhoto = document.querySelector('#labelUploadPhoto')
+
     // si la valeur d'un element est vide ou null alors on ajoute le nom de l'élement dans un tableau.
     if(e.value === "" || e.value === null){
         inputsModale2.push(e.id)
@@ -307,13 +310,18 @@ document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEa
                 return
             }
 
+            while(labelUpPhoto.firstChild){
+                labelUpPhoto.firstChild.remove()
+            }
+
             //Fonction, pour venir lire le fichier ajouté
             var oFReader = new FileReader();
             oFReader.readAsDataURL(e.files[0]);
 
             //On créé les élements qui font permettre d'afficher l'image
             document.querySelectorAll('#labelUploadPhoto svg, #labelUploadPhoto span').forEach(el => el.style.display = "none")
-            const labelUpPhoto = document.querySelector('#labelUploadPhoto')
+
+            // Création balise img pour la prévisualiation de l'image
             const labelUpPhotoImg = document.createElement('img')
 
             //Chargement de l'image dans la balise <img>
@@ -321,6 +329,7 @@ document.querySelectorAll('#displayModale2 input, #displayModale2 select').forEa
                 labelUpPhotoImg.src = ReaderEvent.target.result
             }
             labelUpPhotoImg.style = "box-sizing:border-box;height:100%;object-fit:contain;"
+
 
             labelUpPhoto.appendChild(labelUpPhotoImg)
         }
